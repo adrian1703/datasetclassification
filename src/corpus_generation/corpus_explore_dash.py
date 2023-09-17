@@ -73,19 +73,47 @@ mapped_categories_fig = px.line(mapped_categories, x="name", y="number_of_catego
                                 title="Number of categories mapped to DDC classes")
 
 #%%
-df = data["mapping_complete_and_depth_ext_5"]
-class_dict = {i[0]:i[1]for i in ddc_classes}
-data_radar = []
-for key,value in class_dict.items():
-    if key % 10 == 0:
-        count = 0
-        for i in [*range(10)]:
-            count += len(df[(df.topic_id==(key+i))].index)
-        if count == 0:continue
-        data_radar.append([str(key) + ":" + value, count])
-data_radar = pd.DataFrame(data=data_radar, columns=["name","count"])    
-radar_fig = px.line_polar(data_radar, r="count", theta="name", line_close=True)
-radar_fig.update_polars(radialaxis={"type":"log"})
+def get_radar_df(source, ddc_classes):
+    df = source
+    class_dict = {i[0]:i[1]for i in ddc_classes}
+    data_radar = []
+    for key,value in class_dict.items():
+        if key % 10 == 0:
+            count = 0
+            for i in [*range(10)]:
+                count += len(df[(df.topic_id==(key+i))].index)
+            #if count == 0:continue
+            data_radar.append([str(key) + ":" + value, count])
+    return pd.DataFrame(data=data_radar, columns=["name","count"]) 
+def get_radar_fig(data_df):
+    fig = go.Figure()
+    for df in data_df:
+        fig.add_trace(go.Scatterpolar(
+          r=df[1]["count"],
+          theta=df[1]["name"],
+          fill='toself',
+          name=df[0]
+            ))
+    fig.update_layout(
+      polar=dict(
+        radialaxis=dict(
+          visible=True,
+          type="log"
+        ),
+      ),
+      showlegend=True
+    )
+    return fig
+data_radar = [
+        ["complete_0", data["mapping_with_manual_ext_and_outline_ext"]],
+        ["complete_1", data["mapping_complete_and_depth_ext_1"]],
+        ["complete_2", data["mapping_complete_and_depth_ext_2"]],
+        ["complete_3", data["mapping_complete_and_depth_ext_3"]],
+        ["complete_4", data["mapping_complete_and_depth_ext_4"]],
+        ["complete_5", data["mapping_complete_and_depth_ext_5"]]
+        ]
+data_radar = [[i[0],get_radar_df(i[1],ddc_classes)] for i in data_radar]
+radar_fig = get_radar_fig(data_radar)
 #%%
 app = Dash("Corpus Analyse")
 

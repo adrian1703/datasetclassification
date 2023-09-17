@@ -37,5 +37,3 @@ svm_model = models_svm[0][0]
 svm_scaler = models_svm[0][1]
 ft_model = models_fasttext[0]
 del res_fasttext, res_stm, res_svm, stm_models, models_fasttext, models_svm , src_dir
-#%%
-pip show 

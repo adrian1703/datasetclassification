@@ -37,7 +37,7 @@ evaluate their performance on the 20NewsGroupsDataset
     res_stm, stm_models = stm.k_fold(src_dir, {"ranking_c" : lambda a,b: a * b / 100}, ddc_classes=ddc_classes_to_include, early_break=True)
     stm_model = stm_models[0]
     print("gen svm extension")
-    res_svm, models_svm = svm.k_fold_svm(stm_models, src_dir, ddc_classes_to_include,early_break=False, svm_C=0.1,  train_chunk=30000)
+    res_svm, models_svm = svm.k_fold_svm(stm_models, src_dir, ddc_classes_to_include,early_break=True, svm_C=0.1,  train_chunk=30000)
     print("gen fasttext")
     src_dir = "D:/Informatikstudium/bachelor/stp/resources/corpus/grp_by_ddc/1_1_1_1"
     res_fasttext, models_fasttext = ft.fasttext_k_fold(src_dir,ddc_classes_to_include, epochs=5, ngrams=2, dim=100, lr=0.6,early_break=True)
